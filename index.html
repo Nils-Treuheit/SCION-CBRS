@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/x-icon" href="your-favicon.ico">
+    <link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet">
+    <title>Video Streaming</title>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Welcome to the CDN Performance Test Showcase!</h1>
+
+    <!-- Text Block -->
+    <div style="text-align: center;">
+        <p>
+            This webpage serves as a testing ground to explore and demonstrate the varying performance outcomes associated with different Content Delivery Network (CDN) paths when delivering broadcasted web content.<br>
+            In this experiment, we've employed a diverse set of CDN paths to disseminate content types such as text, images, and video. The primary goal is to observe and analyze how the selection of a CDN influences the loading speed and overall performance of a webpage.<br>
+            As you navigate through the site, pay close attention to the loading times of text blocks, images, and video playback. Each element is sourced through distinct CDN paths, enabling us to assess the efficiency and reliability of each delivery method.<br>
+            This test is particularly beneficial for web developers, content creators, and anyone keen on optimizing the delivery of online content. By discerning the performance nuances of various CDN paths, you gain valuable insights to make informed decisions that can enhance the user experience on your website.<br>            
+            Your participation in this test is greatly appreciated. Explore the different content sections, and take note of the loading behaviors. Your observations will contribute to a better understanding of the impact of CDN choices on web performance.<br>
+            Thank you for being a part of our CDN Performance Test Showcase!
+        </p>
+    </div>
+
+    <!-- Image Block -->
+    <div style="text-align: center;">
+        <img src="your-image-url.jpg" alt="Description of the image">
+    </div>
+
+    <!-- GIF Block -->
+    <div style="text-align: center;">
+        <img src="your-gif-url.gif" alt="GIF Description">
+    </div>
+
+    <!-- Audio Block -->
+    <div style="text-align: center;">
+        <audio controls>
+            <source src="your-audio-file.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Video on Demand Block -->
+    <div style="width: 640px; margin: 0 auto; text-align: center;">
+        <video controls width="640" height="360" poster="your-video-poster.jpg">
+            <source src="your-video-file.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Video Streaming Block -->
+    <div id="player" style="width: 1280px; margin: 0 auto; text-align: center;">
+        <video id="video" class="video-js" controls preload="auto" width="1280" height="720" poster="your-poster-image.jpg" data-setup="{}">
+            <!-- Update the source with your own video link -->
+            <source type="application/x-mpegURL" src="your-video-url.m3u8">
+            <p class="vjs-no-js">
+                To view this video please enable JavaScript and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+        </video>
+    </div>
+
+    <script src="https://vjs.zencdn.net/7.15.4/video.min.js"></script>
+</body>
+</html>
