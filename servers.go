@@ -56,6 +56,7 @@ Navigating to http://localhost:8080 will display the directory file listings.
 */
 func file_server(directory *string, port *string) 
 {
+	// Sample video from https://www.youtube.com/watch?v=xj2heO4-u-8
 	mux := http.NewServeMux()
 	mux.Handle("/", addHeaders(http.FileServer(http.Dir(*directory))))
 
@@ -105,6 +106,43 @@ func web_server(webDir *string, tslPort *string, webPort *string)
 		// Sample image from https://blog.apnic.net/wp-content/uploads/2021/09/SCION-FT-555x202.jpg?v=1670e3759db62840c91aa22608946e73
 	  }
 	)
+	
+	// handler that responds with an gif file
+	m.HandleFunc("/sample-gif", func(w http.ResponseWriter, r *http.Request) 
+	  {
+		// serve the sample GIF file
+		// Status 200 OK will be set implicitly
+		// Content-Length will be inferred by server
+		// Content-Type will be detected by server
+		http.ServeFile(w, r, *webDir+"boycott.gif") 
+		// Sample image from https://giphy.com/gifs/southparkgifs-3o6ZsZTFpJxmZaeqcw
+	  }
+	)
+
+	// handler that responds with an audio file
+	m.HandleFunc("/sample-audio", func(w http.ResponseWriter, r *http.Request) 
+	  {
+		// serve the sample AUDIO file
+		// Status 200 OK will be set implicitly
+		// Content-Length will be inferred by server
+		// Content-Type will be detected by server
+		http.ServeFile(w, r, *webDir+"Chopin-nocturne-op-9-no-2.mp3") 
+		// Sample music from https://orangefreesounds.com/chopin-nocturne-op-9-no-2
+	  }
+	)
+
+	// handler that responds with an video file
+	m.HandleFunc("/sample-video", func(w http.ResponseWriter, r *http.Request) 
+	  {
+		// serve the sample MP4 file
+		// Status 200 OK will be set implicitly
+		// Content-Length will be inferred by server
+		// Content-Type will be detected by server
+		http.ServeFile(w, r, *webDir+"SCION_DDoS_Def.mp4") 
+		// Sample video from https://www.youtube.com/watch?v=-JeEppbCZTw
+	  }
+	)
+	
 
 	// GET handler that responds with some json data
 	m.HandleFunc("/sample-json", func(w http.ResponseWriter, r *http.Request) 
