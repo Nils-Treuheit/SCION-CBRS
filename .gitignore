@@ -1,7 +1,9 @@
-legacy/*
 *.mp4
+*.m4s
 *.ts
 *.m3u8
 *.JPG
 *.gif
 *.mp3
+*.ico
+*.png
