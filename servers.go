@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/gorilla/handlers"
-	"github.com/netsec-ethz/scion-apps/pkg/shttp"
+	"github.com/netsec-ethz/scion-apps/pkg/pan"
 )
 
 // relatively simple webserver fileserver topology
@@ -25,9 +25,11 @@ func main() {
 	fileServPort := flag.String("fileServPort", "8899", "The port to serve website on")
 	fileDir := flag.String("fileDir", "stream_files", "The directory of streaming content to host")
 	flag.Parse()
+	rrrs := NewRRReplySelector()
+	srs := NewSmartReplySelector()
 
-	go file_server(fileDir, fileServPort)
-	web_server(webDir, tslServPort, webServPort)
+	go file_server(fileDir, fileServPort, srs)
+	web_server(webDir, tslServPort, webServPort, rrrs)
 }
 
 // addHeaders will act as middleware to give us CORS support
@@ -42,20 +44,20 @@ func addHeaders(h http.Handler) http.HandlerFunc {
 This is a very simple static file server in go
 Navigating to http://localhost:8899 will display the directory file listings.
 */
-func file_server(directory *string, port *string) {
+func file_server(directory *string, port *string, rs pan.ReplySelector) {
 	// Sample video from https://www.youtube.com/watch?v=xj2heO4-u-8
 	mux := http.NewServeMux()
 	mux.Handle("/", addHeaders(http.FileServer(http.Dir(*directory))))
 
 	log.Printf("File-Server serves %s folder's streaming content on HTTP port: %s\n", *directory, *port)
-	log.Fatalf("%s", shttp.ListenAndServe(":"+*port, mux))
+	log.Fatalf("%s", ListenAndServeRepSelect(":"+*port, mux, rs))
 }
 
 /*
 This is a very simple webpage server in go
 Navigating to https://localhost:433 or http://localhost:80 will display the index.html.
 */
-func web_server(webDir *string, tslPort *string, webPort *string) {
+func web_server(webDir *string, tslPort *string, webPort *string, rs pan.ReplySelector) {
 	webpage := "index.html"
 	website := *webDir + "/" + webpage
 	icon := *webDir + "/favicon.ico"
@@ -166,10 +168,10 @@ func web_server(webDir *string, tslPort *string, webPort *string) {
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
 	if *certFile != "" && *keyFile != "" {
-		go func() { log.Fatal(shttp.ListenAndServeTLS(":"+*tslPort, *certFile, *keyFile, handler)) }()
+		go func() { log.Fatal(ListenAndServeTLSRepSelect(":"+*tslPort, *certFile, *keyFile, handler, rs)) }()
 		log.Printf("Web-Server serves %s webpage and its elements on HTTP port: %s\n", webpage, *tslPort)
 	} else {
 		log.Printf("Web-Server serves %s webpage and its elements on HTTP port: %s\n", webpage, *webPort)
 	}
-	log.Fatal(shttp.ListenAndServe(":"+*webPort, handler))
+	log.Fatal(ListenAndServeRepSelect(":"+*webPort, handler, rs))
 }
