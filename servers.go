@@ -20,16 +20,19 @@ import (
 // derived from the SCION-TV project
 func main() {
 	webServPort := flag.String("webServPort", "80", "The port to serve website on")
+	contentServPort := flag.String("contentServPort", "8181", "The port to serve website-content on")
 	tslServPort := flag.String("tslServPort", "433", "The tsl port to serve website with tsl certificate on")
 	webDir := flag.String("webDir", "website", "The directory of static webpage elements to host")
 	fileServPort := flag.String("fileServPort", "8899", "The port to serve website on")
 	fileDir := flag.String("fileDir", "stream_files", "The directory of streaming content to host")
 	flag.Parse()
-	rrrs := NewRRReplySelector()
-	srs := NewSmartReplySelector()
+	ivrs := NewSmartReplySelector(2)
+	vsrs := NewSmartReplySelector(1)
+	grs := NewSmartReplySelector(0)
 
-	go file_server(fileDir, fileServPort, srs)
-	web_server(webDir, tslServPort, webServPort, rrrs)
+	go file_server(fileDir, fileServPort, vsrs)
+	go content_server(webDir, contentServPort, ivrs)
+	web_server(webDir, tslServPort, webServPort, grs)
 }
 
 // addHeaders will act as middleware to give us CORS support
@@ -55,22 +58,12 @@ func file_server(directory *string, port *string, rs pan.ReplySelector) {
 
 /*
 This is a very simple webpage server in go
-Navigating to https://localhost:433 or http://localhost:80 will display the index.html.
+Navigating to https://localhost:8181 will display the index.html.
 */
-func web_server(webDir *string, tslPort *string, webPort *string, rs pan.ReplySelector) {
-	webpage := "index.html"
-	website := *webDir + "/" + webpage
-	icon := *webDir + "/favicon.ico"
+func content_server(webDir *string, webPort *string, rs pan.ReplySelector) {
 	pic := *webDir + "/background.png"
 
-	certFile := flag.String("cert", "", "Path to TLS server certificate for optional https")
-	keyFile := flag.String("key", "", "Path to TLS server key for optional https")
-	flag.Parse()
-
 	m := http.NewServeMux()
-
-	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, website) })
-	m.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, icon) })
 	m.HandleFunc("/background.png", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, pic) })
 
 	// handler that responds with a friendly greeting
@@ -167,11 +160,35 @@ func web_server(webDir *string, tslPort *string, webPort *string, rs pan.ReplySe
 	})
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
-	if *certFile != "" && *keyFile != "" {
-		go func() { log.Fatal(ListenAndServeTLSRepSelect(":"+*tslPort, *certFile, *keyFile, handler, rs)) }()
-		log.Printf("Web-Server serves %s webpage and its elements on HTTP port: %s\n", webpage, *tslPort)
-	} else {
-		log.Printf("Web-Server serves %s webpage and its elements on HTTP port: %s\n", webpage, *webPort)
-	}
+	log.Printf("Content-Server serves webpage content on HTTP port: %s\n", *webPort)
 	log.Fatal(ListenAndServeRepSelect(":"+*webPort, handler, rs))
+}
+
+/*
+This is a very simple webpage server in go
+Navigating to https://localhost:433 or http://localhost:80 will display the index.html.
+*/
+func web_server(webDir *string, tslPort *string, webPort *string, rs pan.ReplySelector) {
+	webpage := "index.html"
+	website := *webDir + "/" + webpage
+	icon := *webDir + "/favicon.ico"
+
+	certFile := flag.String("cert", "", "Path to TLS server certificate for optional https")
+	keyFile := flag.String("key", "", "Path to TLS server key for optional https")
+	flag.Parse()
+
+	m := http.NewServeMux()
+
+	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, website) })
+	m.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, icon) })
+
+	handler := handlers.LoggingHandler(os.Stdout, m)
+	if *certFile != "" && *keyFile != "" {
+		log.Fatal(ListenAndServeTLSRepSelect(":"+*tslPort, *certFile, *keyFile, handler, rs))
+		log.Printf("Web-Server serves %s webpage on HTTPS port: %s\n", webpage, *tslPort)
+	} else {
+		log.Fatal(ListenAndServeRepSelect(":"+*webPort, handler, rs))
+		log.Printf("Web-Server serves %s webpage on HTTP port: %s\n", webpage, *webPort)
+	}
+
 }

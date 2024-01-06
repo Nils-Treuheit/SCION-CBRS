@@ -47,7 +47,7 @@ func ListenAndServe(addr string, handler http.Handler) error {
 		Server: &http.Server{
 			Addr:    addr,
 			Handler: handler,
-		}, rs: nil,
+		}, rs: pan.NewDefaultReplySelector(),
 	}
 	return s.ListenAndServe()
 }
@@ -59,7 +59,7 @@ func ListenAndServeTLS(addr, certFile, keyFile string, handler http.Handler) err
 		Server: &http.Server{
 			Addr:    addr,
 			Handler: handler,
-		}, rs: nil,
+		}, rs: pan.NewDefaultReplySelector(),
 	}
 	return s.ListenAndServeTLS(certFile, keyFile)
 }

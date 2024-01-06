@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"sync"
 	"time"
 
@@ -28,6 +29,20 @@ func NewRRReplySelector() *RRReplySelector {
 	}
 }
 
+func NewSmartReplySelector(content_id int) *RRReplySelector {
+	remotePaths := make(map[pan.UDPAddr]remoteEntry)
+
+	for addr, entry := range remotePaths {
+		entry.paths = filterPaths(entry.paths, content_id)
+		remotePaths[addr] = entry
+	}
+
+	return &RRReplySelector{
+		remotes: remotePaths,
+		idx:     0,
+	}
+}
+
 func (s *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
@@ -42,113 +57,60 @@ func (s *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	return r.paths[s.idx-1]
 }
 
-type SmartReplySelector struct {
-	pan.DefaultReplySelector
-	mtx     sync.RWMutex
-	remotes map[pan.UDPAddr]remoteEntry
-	idx     int
-	cid     int
-}
+func filterPaths(paths pathsMRU, cid int) pathsMRU {
+	var filtered pathsMRU
+	var mtus []uint16
+	var lats []int64
+	var bws []uint64
 
-func NewSmartReplySelector() *SmartReplySelector {
-	return &SmartReplySelector{
-		remotes: make(map[pan.UDPAddr]remoteEntry),
-		idx:     0,
-		cid:     0,
-	}
-}
-
-func (s *SmartReplySelector) Path(remote pan.UDPAddr) *pan.Path {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-	r, ok := s.remotes[remote]
-	var chosenPath *pan.Path = nil
-	if !ok || len(r.paths) == 0 {
-		return nil
-	}
-	chosenPath = r.paths[0]
-	s.idx += 1
-	if s.idx > len(r.paths) {
-		s.idx = 1
-	}
-	if s.cid == 0 {
-		found := false
-		for idx := s.idx - 1; idx < len(r.paths); idx++ {
-			if r.paths[idx].Metadata.MTU >= 1500 {
-				chosenPath = r.paths[idx]
-				found = true
-				break
+	for idx := range paths {
+		switch cid {
+		case 0:
+			var mtu uint16 = paths[idx].Metadata.MTU
+			if mtu >= 1500 {
+				filtered = append(filtered, paths[idx])
+				mtus = append(mtus, mtu)
 			}
-		}
-		if !found && s.idx > 1 {
-			for idx := 0; idx < s.idx-1; idx++ {
-				if r.paths[idx].Metadata.MTU >= 1500 {
-					s.idx = 1
-					return r.paths[idx]
-				}
-			}
-			s.idx = 1
-		}
-	} else if s.cid == 1 {
-		found := false
-		for idx := s.idx - 1; idx < len(r.paths); idx++ {
-			lats := r.paths[idx].Metadata.Latency
+		case 1:
+			latencies := paths[idx].Metadata.Latency
 			var lat int64 = 0
-			for i := 0; i < len(lats); i++ {
-				lat += lats[i].Milliseconds()
+			for i := range latencies {
+				lat += latencies[i].Milliseconds()
 			}
 			if lat <= 20 {
-				chosenPath = r.paths[idx]
-				found = true
-				break
+				filtered = append(filtered, paths[idx])
+				lats = append(lats, lat)
 			}
-		}
-		if !found && s.idx > 1 {
-			for idx := 0; idx < s.idx-1; idx++ {
-				lats := r.paths[idx].Metadata.Latency
-				var lat int64 = 0
-				for i := 0; i < len(lats); i++ {
-					lat += lats[i].Milliseconds()
-				}
-				if lat <= 20 {
-					s.idx = 1
-					return r.paths[idx]
-				}
-			}
-			s.idx = 1
-		}
-	} else if s.cid == 2 {
-		found := false
-		for idx := s.idx - 1; idx < len(r.paths); idx++ {
-			bws := r.paths[idx].Metadata.Bandwidth
+		case 2:
+			bandwidths := paths[idx].Metadata.Bandwidth
 			var bw uint64 = 0
-			for i := 0; i < len(bws); i++ {
-				if bws[i] < bw {
-					bw = bws[i]
+			for i := range bandwidths {
+				if bandwidths[i] < bw || bw == 0 {
+					bw = bandwidths[i]
 				}
 			}
 			if bw >= 100000 {
-				chosenPath = r.paths[idx]
-				found = true
-				break
+				filtered = append(filtered, paths[idx])
+				bws = append(bws, bw)
 			}
-		}
-		if !found && s.idx > 1 {
-			for idx := 0; idx < s.idx-1; idx++ {
-				bws := r.paths[idx].Metadata.Bandwidth
-				var bw uint64 = 0
-				for i := 0; i < len(bws); i++ {
-					if bws[i] < bw {
-						bw = bws[i]
-					}
-				}
-				if bw >= 100000 {
-					s.idx = 1
-					return r.paths[idx]
-				}
-			}
-			s.idx = 1
 		}
 	}
-	return chosenPath
+
+	// Sort filteredPaths by index
+	switch cid {
+	case 0:
+		sort.Slice(filtered, func(i, j int) bool {
+			return mtus[i] < mtus[j]
+		})
+	case 1:
+		sort.Slice(filtered, func(i, j int) bool {
+			return lats[i] < lats[j]
+		})
+	case 2:
+		sort.Slice(filtered, func(i, j int) bool {
+			return bws[i] > bws[j]
+		})
+	}
+
+	return filtered
 }
