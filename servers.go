@@ -16,9 +16,55 @@ import (
 	"github.com/netsec-ethz/scion-apps/pkg/pan"
 )
 
+func main() {
+	var ivrs pan.ReplySelector = NewSmartReplySelector(2)
+	var vsrs pan.ReplySelector = NewSmartReplySelector(1)
+	var grs pan.ReplySelector = NewSmartReplySelector(0)
+
+	if len(os.Args) < 2 {
+		fmt.Println("Execute smart round robin approach:")
+		startServs(ivrs, vsrs, grs)
+		return
+	}
+
+	command := os.Args[1]
+
+	switch command {
+	case "nors":
+		fmt.Println("Execute no reply selector approach:")
+		ivrs = pan.NewDefaultReplySelector()
+		vsrs = pan.NewDefaultReplySelector()
+		grs = pan.NewDefaultReplySelector()
+	case "rrrs":
+		fmt.Println("Execute round robin reply selector approach:")
+		ivrs = NewRRReplySelector()
+		vsrs = NewRRReplySelector()
+		grs = NewRRReplySelector()
+	case "mturs":
+		fmt.Println("Execute MTU filtered round robin approach:")
+		ivrs = NewSmartReplySelector(0)
+		vsrs = NewSmartReplySelector(0)
+		grs = NewSmartReplySelector(0)
+	case "latrs":
+		fmt.Println("Execute latency filtered round robin approach:")
+		ivrs = NewSmartReplySelector(1)
+		vsrs = NewSmartReplySelector(1)
+		grs = NewSmartReplySelector(1)
+	case "bwrs":
+		fmt.Println("Execute bandwidth filtered round robin approach:")
+		ivrs = NewSmartReplySelector(2)
+		vsrs = NewSmartReplySelector(2)
+		grs = NewSmartReplySelector(2)
+	default:
+		fmt.Println("Your ReplySelector Strategy has not been implemented!")
+		return
+	}
+	startServs(ivrs, vsrs, grs)
+}
+
 // relatively simple webserver fileserver topology
 // derived from the SCION-TV project
-func main() {
+func startServs(ivrs pan.ReplySelector, vsrs pan.ReplySelector, grs pan.ReplySelector) {
 	webServPort := flag.String("webServPort", "80", "The port to serve website on")
 	contentServPort := flag.String("contentServPort", "8181", "The port to serve website-content on")
 	tslServPort := flag.String("tslServPort", "433", "The tsl port to serve website with tsl certificate on")
@@ -26,9 +72,6 @@ func main() {
 	fileServPort := flag.String("fileServPort", "8899", "The port to serve website on")
 	fileDir := flag.String("fileDir", "stream_files", "The directory of streaming content to host")
 	flag.Parse()
-	ivrs := NewSmartReplySelector(2)
-	vsrs := NewSmartReplySelector(1)
-	grs := NewSmartReplySelector(0)
 
 	go file_server(fileDir, fileServPort, vsrs)
 	go content_server(webDir, contentServPort, ivrs)
@@ -161,7 +204,7 @@ func content_server(webDir *string, webPort *string, rs pan.ReplySelector) {
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
 	log.Printf("Content-Server serves webpage content on HTTP port: %s\n", *webPort)
-	log.Fatal(ListenAndServeRepSelect(":"+*webPort, handler, rs))
+	log.Fatalf("%s", ListenAndServeRepSelect(":"+*webPort, handler, rs))
 }
 
 /*
@@ -184,11 +227,9 @@ func web_server(webDir *string, tslPort *string, webPort *string, rs pan.ReplySe
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
 	if *certFile != "" && *keyFile != "" {
-		log.Fatal(ListenAndServeTLSRepSelect(":"+*tslPort, *certFile, *keyFile, handler, rs))
 		log.Printf("Web-Server serves %s webpage on HTTPS port: %s\n", webpage, *tslPort)
-	} else {
-		log.Fatal(ListenAndServeRepSelect(":"+*webPort, handler, rs))
-		log.Printf("Web-Server serves %s webpage on HTTP port: %s\n", webpage, *webPort)
+		go func() { log.Fatal(ListenAndServeTLSRepSelect(":"+*tslPort, *certFile, *keyFile, handler, rs)) }()
 	}
-
+	log.Printf("Web-Server serves %s webpage on HTTP port: %s\n", webpage, *webPort)
+	log.Fatalf("%s", ListenAndServeRepSelect(":"+*webPort, handler, rs))
 }
