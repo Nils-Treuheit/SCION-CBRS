@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/netsec-ethz/scion-apps/pkg/pan"
+	"github.com/Nils-Treuheit/SCION-CDN/pkg/pan"
 	"github.com/netsec-ethz/scion-apps/pkg/quicutil"
 )
 

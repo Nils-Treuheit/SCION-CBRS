@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Nils-Treuheit/SCION-CDN/pkg/pan"
 	"github.com/gorilla/handlers"
-	"github.com/netsec-ethz/scion-apps/pkg/pan"
 )
 
 func main() {
