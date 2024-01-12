@@ -21,7 +21,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/netsec-ethz/scion-apps/pkg/new_pan"
+	"github.com/nils-treuheit/scion-cdn/pkg/new_pan"
 )
 
 func TestUDPAddrIsValid(t *testing.T) {

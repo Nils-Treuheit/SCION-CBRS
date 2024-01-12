@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ping
+package new_pan
 
 // XXX this is copy-pasted & adapted from github.com/scionproto/scion/go/pkg/ping
 // Adapted to allow pinging multiple, changing destination (or one destination over multiple paths)

@@ -23,7 +23,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/nils-treuheit/scion-cdn/pkg/new_pan/internal/ping"
 	"github.com/scionproto/scion/pkg/addr"
 )
 
