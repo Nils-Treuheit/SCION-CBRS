@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/nils-treuheit/scion-cdn/pkg/new_pan"
+	"github.com/netsec-ethz/scion-apps/pkg/pan"
 
 	"github.com/netsec-ethz/scion-apps/pkg/quicutil"
 )
@@ -14,12 +14,12 @@ import (
 // Server wraps a http.Server making it work with SCION
 type SCIONServer struct {
 	*http.Server
-	rs new_pan.ReplySelector
+	rs pan.ReplySelector
 }
 
 // ListenAndServe listens for HTTP connections on the SCION address addr and calls Serve
 // with handler to handle requests
-func ListenAndServeRepSelect(addr string, handler http.Handler, repsel new_pan.ReplySelector) error {
+func ListenAndServeRepSelect(addr string, handler http.Handler, repsel pan.ReplySelector) error {
 	s := &SCIONServer{
 		Server: &http.Server{
 			Addr:    addr,
@@ -31,7 +31,7 @@ func ListenAndServeRepSelect(addr string, handler http.Handler, repsel new_pan.R
 
 // ListenAndServe listens for HTTPS connections on the SCION address addr and calls Serve
 // with handler to handle requests
-func ListenAndServeTLSRepSelect(addr, certFile, keyFile string, handler http.Handler, repsel new_pan.ReplySelector) error {
+func ListenAndServeTLSRepSelect(addr, certFile, keyFile string, handler http.Handler, repsel pan.ReplySelector) error {
 	s := &SCIONServer{
 		Server: &http.Server{
 			Addr:    addr,
@@ -48,7 +48,7 @@ func ListenAndServe(addr string, handler http.Handler) error {
 		Server: &http.Server{
 			Addr:    addr,
 			Handler: handler,
-		}, rs: new_pan.NewDefaultReplySelector(),
+		}, rs: pan.NewDefaultReplySelector(),
 	}
 	return s.ListenAndServe()
 }
@@ -60,19 +60,19 @@ func ListenAndServeTLS(addr, certFile, keyFile string, handler http.Handler) err
 		Server: &http.Server{
 			Addr:    addr,
 			Handler: handler,
-		}, rs: new_pan.NewDefaultReplySelector(),
+		}, rs: pan.NewDefaultReplySelector(),
 	}
 	return s.ListenAndServeTLS(certFile, keyFile)
 }
 
 func (srv *SCIONServer) Serve(l net.Listener) error {
 	// Providing a custom listener defeats the purpose of this library.
-	new_panic("not implemented")
+	panic("not implemented")
 }
 
 func (srv *SCIONServer) ServeTLS(l net.Listener, certFile, keyFile string) error {
 	// Providing a custom listener defeats the purpose of this library.
-	new_panic("not implemented")
+	panic("not implemented")
 }
 
 // ListenAndServe listens for QUIC connections on srv.Addr and
@@ -95,16 +95,16 @@ func (srv *SCIONServer) ListenAndServeTLS(certFile, keyFile string) error {
 	return srv.Server.ServeTLS(listener, certFile, keyFile)
 }
 
-func listen(addr string, rs new_pan.ReplySelector) (net.Listener, error) {
+func listen(addr string, rs pan.ReplySelector) (net.Listener, error) {
 	tlsCfg := &tls.Config{
 		NextProtos:   []string{quicutil.SingleStreamProto},
 		Certificates: quicutil.MustGenerateSelfSignedCert(),
 	}
-	laddr, err := new_pan.ParseOptionalIPPort(addr)
+	laddr, err := pan.ParseOptionalIPPort(addr)
 	if err != nil {
 		return nil, err
 	}
-	quicListener, err := new_pan.ListenQUIC(context.Background(), laddr, rs, tlsCfg, nil)
+	quicListener, err := pan.ListenQUIC(context.Background(), laddr, rs, tlsCfg, nil)
 	if err != nil {
 		return nil, err
 	}

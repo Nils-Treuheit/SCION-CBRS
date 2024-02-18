@@ -1,10 +1,12 @@
-module scion-cdn
+module github.com/nils-treuheit/scion-cdn
 
 go 1.20
 
 require (
 	github.com/gorilla/handlers v1.5.2
 	github.com/netsec-ethz/scion-apps v0.5.1-0.20231107140149-3afc9a911808
+	github.com/scionproto/scion v0.9.1
+	inet.af/netaddr v0.0.0-20230525184311-b8eac61e914a
 )
 
 require (
@@ -42,12 +44,13 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.3.3 // indirect
 	github.com/quic-go/quic-go v0.38.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/scionproto/scion v0.9.1 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.0.0+incompatible // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
+	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
+	go4.org/unsafe/assume-no-moving-gc v0.0.0-20230525183740-e7c30c78aeb2 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/exp v0.0.0-20221205204356-47842c84f3db // indirect
 	golang.org/x/mod v0.10.0 // indirect
@@ -69,3 +72,5 @@ require (
 	modernc.org/strutil v1.1.3 // indirect
 	modernc.org/token v1.0.1 // indirect
 )
+
+replace github.com/netsec-ethz/scion-apps => /home/nils-z/scion-apps/
