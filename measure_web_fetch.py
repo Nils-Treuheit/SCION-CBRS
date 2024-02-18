@@ -26,11 +26,25 @@ def main(url):
         soup = BeautifulSoup(response.content, 'html.parser')
         
         # Find all links
-        links = soup.find_all('a', href=True)
+        href_links = soup.find_all('a', href=True)+\
+                     soup.find_all('link', href=True)
+        src_links = soup.find_all('img', src=True)+\
+                    soup.find_all('source', src=True)
         
         # Download each link and measure time
-        for link in links:
+        for link in href_links:
             link_url = link['href']
+            if not link_url.startswith('http'):
+                link_url = url + link_url
+
+            try:
+                _, link_time = fetch_and_time(link_url)
+                print(f"Time taken to fetch {link_url}: {link_time} seconds")
+            except requests.RequestException as e:
+                print(f"Error fetching {link_url}: {e}")
+
+        for link in src_links:
+            link_url = link['src']
             if not link_url.startswith('http'):
                 link_url = url + link_url
 
