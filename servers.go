@@ -18,9 +18,10 @@ import (
 )
 
 func main() {
-	var ivrs pan.ReplySelector = NewSmartReplySelector(2)
-	var vsrs pan.ReplySelector = NewSmartReplySelector(1)
-	var grs pan.ReplySelector = NewSmartReplySelector(0)
+	var nr_rr_paths int = 10
+	var ivrs pan.ReplySelector = NewSmartReplySelector(2, nr_rr_paths)
+	var vsrs pan.ReplySelector = NewSmartReplySelector(1, nr_rr_paths)
+	var grs pan.ReplySelector = NewSmartReplySelector(0, nr_rr_paths)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Execute smart round robin approach:")
@@ -36,24 +37,24 @@ func main() {
 			grs = pan.NewDefaultReplySelector()
 		case "rrrs":
 			fmt.Println("Execute round robin reply selector approach:")
-			ivrs = NewRRReplySelector()
-			vsrs = NewRRReplySelector()
-			grs = NewRRReplySelector()
+			ivrs = NewRRReplySelector(nr_rr_paths)
+			vsrs = NewRRReplySelector(nr_rr_paths)
+			grs = NewRRReplySelector(nr_rr_paths)
 		case "mturs":
 			fmt.Println("Execute MTU filtered round robin approach:")
-			ivrs = NewSmartReplySelector(0)
-			vsrs = NewSmartReplySelector(0)
-			grs = NewSmartReplySelector(0)
+			ivrs = NewSmartReplySelector(0, nr_rr_paths)
+			vsrs = NewSmartReplySelector(0, nr_rr_paths)
+			grs = NewSmartReplySelector(0, nr_rr_paths)
 		case "latrs":
 			fmt.Println("Execute latency filtered round robin approach:")
-			ivrs = NewSmartReplySelector(1)
-			vsrs = NewSmartReplySelector(1)
-			grs = NewSmartReplySelector(1)
+			ivrs = NewSmartReplySelector(1, nr_rr_paths)
+			vsrs = NewSmartReplySelector(1, nr_rr_paths)
+			grs = NewSmartReplySelector(1, nr_rr_paths)
 		case "bwrs":
 			fmt.Println("Execute bandwidth filtered round robin approach:")
-			ivrs = NewSmartReplySelector(2)
-			vsrs = NewSmartReplySelector(2)
-			grs = NewSmartReplySelector(2)
+			ivrs = NewSmartReplySelector(2, nr_rr_paths)
+			vsrs = NewSmartReplySelector(2, nr_rr_paths)
+			grs = NewSmartReplySelector(2, nr_rr_paths)
 		default:
 			fmt.Println("Your ReplySelector Strategy has not been implemented!")
 			return

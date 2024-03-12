@@ -18,9 +18,8 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 	case 0:
 		var mtus []uint16
 		for idx := 0; idx < len(paths); idx++ {
-			//fmt.Println(paths[idx])
-			fmt.Printf("%d. Path's MTU:", idx+1)
-			fmt.Println(paths[idx].Metadata.MTU)
+			//fmt.Printf("%d. Path's MTU:", idx+1)
+			//fmt.Println(paths[idx].Metadata.MTU)
 			var mtu uint16 = paths[idx].Metadata.MTU
 			if mtu >= 1400 {
 				filtered = append(filtered, paths[idx])
@@ -31,48 +30,36 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 			return mtus[i] < mtus[j]
 		})
 	case 1:
-		var lats []int64
 		for idx := 0; idx < len(paths); idx++ {
-			fmt.Printf("%d. Path's Latencies:", idx+1)
-			fmt.Println(paths[idx].Metadata.Latency)
-			latencies := paths[idx].Metadata.Latency
-			var lat int64 = 0 //simplify to paths[idx].Metadata.latencySum()[0].Milliseconds()
-			for i := range latencies {
-				lat += latencies[i].Milliseconds()
-			}
-			if lat <= 20 {
+			//fmt.Printf("%d. Path's Latencies:", idx+1)
+			//fmt.Println(paths[idx].Metadata.Latency)
+			lat, _ := paths[idx].Metadata.LatencySum()
+			if lat.Milliseconds() <= 20 {
 				filtered = append(filtered, paths[idx])
-				lats = append(lats, lat)
 			}
 		}
-		//could use LowerLatency comperator as shown below
 		sort.Slice(filtered, func(i, j int) bool {
-			return lats[i] < lats[j]
+			a, b := filtered[i].Metadata.LowerLatency(filtered[j].Metadata)
+			return b && a
+			//return lats[i] < lats[j]
 		})
 	case 2:
-		var bws []uint64
 		for idx := 0; idx < len(paths); idx++ {
-			fmt.Printf("%d. Path's Latencies:", idx+1)
-			fmt.Println(paths[idx].Metadata.Bandwidth)
-			bandwidths := paths[idx].Metadata.Bandwidth
-			var bw uint64 = 0 //simplify to paths[idx].Metadata.bandwidthMin()[0]
-			for i := range bandwidths {
-				if bandwidths[i] < bw || bw == 0 {
-					bw = bandwidths[i]
-				}
-			}
+			//fmt.Printf("%d. Path's Latencies:", idx+1)
+			//fmt.Println(paths[idx].Metadata.Bandwidth)
+			bw, _ := paths[idx].Metadata.BandwidthMin()
 			if bw >= 100000 {
 				filtered = append(filtered, paths[idx])
-				bws = append(bws, bw)
 			}
 		}
-		//could use HigherBandwidth comperator with lambda on filtered lambda x,y: x.Metadata.HigherBandwidth(y.Metadata)
 		sort.Slice(filtered, func(i, j int) bool {
-			return bws[i] > bws[j]
+			a, b := filtered[i].Metadata.HigherBandwidth(filtered[j].Metadata)
+			return b && a
+			//return bws[i] > bws[j]
 		})
 	}
 
-	//fmt.Println(len(filtered))
+	//fmt.Printf("Found %d paths viable paths!\n", len(filtered))
 	return filtered
 }
 
@@ -81,6 +68,7 @@ type RRReplySelector struct {
 	hctx    *pan.HostContext
 	remotes map[pan.UDPAddr]pan.RemoteEntry
 	idx     int
+	lim     int
 }
 
 type SmartReplySelector struct {
@@ -88,11 +76,12 @@ type SmartReplySelector struct {
 	cid int
 }
 
-func NewRRReplySelector() *RRReplySelector {
+func NewRRReplySelector(nr_rr_paths int) *RRReplySelector {
 	return &RRReplySelector{
 		hctx:    pan.Host(),
 		remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
 		idx:     0,
+		lim:     nr_rr_paths,
 	}
 }
 
@@ -119,6 +108,11 @@ func (s *RRReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 		return
 	}
 
+	// limit to 5 or 10 best
+	if len(paths) > s.lim {
+		paths = paths[:s.lim]
+	}
+
 	r.Paths = paths
 	s.remotes[remote] = r
 }
@@ -143,11 +137,11 @@ func (s *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	if s.idx > len(r.Paths) {
 		s.idx = 1
 	}
-	fmt.Printf("Found %d paths!\n", len(r.Paths))
+	//fmt.Printf("Choose %d. path of %d found paths!\n", s.idx, len(r.Paths))
 	return r.Paths[s.idx-1]
 }
 
-func NewSmartReplySelector(content_id int) *SmartReplySelector {
+func NewSmartReplySelector(content_id int, nr_rr_paths int) *SmartReplySelector {
 	/*
 	 => remotePaths are only set through Records method
 
@@ -165,6 +159,7 @@ func NewSmartReplySelector(content_id int) *SmartReplySelector {
 			remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
 			hctx:    pan.Host(),
 			idx:     0,
+			lim:     nr_rr_paths,
 		},
 		cid: content_id,
 	}
@@ -193,9 +188,15 @@ func (s *SmartReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 		return
 	}
 
-	r.Paths = paths
 	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
-	r.Paths = filterPaths(r.Paths, s.cid)
+	r.Paths = filterPaths(paths, s.cid)
+
+	// limit to 5 or 10 best
+	if len(paths) > s.rrs.lim {
+		paths = paths[:s.rrs.lim]
+	}
+
+	r.Paths = paths
 	s.rrs.remotes[remote] = r
 }
 
