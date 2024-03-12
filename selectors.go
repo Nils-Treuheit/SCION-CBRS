@@ -31,6 +31,17 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 		})
 	case 1:
 		for idx := 0; idx < len(paths); idx++ {
+			// DEBUG: print non empty latency vectors
+			if len(paths[idx].Metadata.Latency) > 0 {
+				lats := paths[idx].Metadata.Latency
+				for i := 0; i < len(lats); i++ {
+					if lats[i] != 0 {
+						fmt.Printf("%d. Path's Latencies:", idx+1)
+						fmt.Println(lats)
+						break
+					}
+				}
+			}
 			//fmt.Printf("%d. Path's Latencies:", idx+1)
 			//fmt.Println(paths[idx].Metadata.Latency)
 			lat, _ := paths[idx].Metadata.LatencySum()
@@ -45,7 +56,18 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 		})
 	case 2:
 		for idx := 0; idx < len(paths); idx++ {
-			//fmt.Printf("%d. Path's Latencies:", idx+1)
+			// DEBUG: print non empty bandwidths vectors
+			if len(paths[idx].Metadata.Bandwidth) > 0 {
+				bws := paths[idx].Metadata.Bandwidth
+				for i := 0; i < len(bws); i++ {
+					if bws[i] != 0 {
+						fmt.Printf("%d. Path's Bandwidths:", idx+1)
+						fmt.Println(bws)
+						break
+					}
+				}
+			}
+			//fmt.Printf("%d. Path's Bandwidths:", idx+1)
 			//fmt.Println(paths[idx].Metadata.Bandwidth)
 			bw, _ := paths[idx].Metadata.BandwidthMin()
 			if bw >= 100000 {
@@ -99,20 +121,24 @@ func (s *RRReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := s.remotes[remote]
 	if ok && len(r.Paths) > 0 {
+		fmt.Println("No Paths found!")
 		return
 	}
 
 	r.Seen = time.Now()
 	paths, err := s.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
+		fmt.Println("ERORR while querying Paths!")
 		return
 	}
+	fmt.Printf("Found %d path(s)!\n", len(r.Paths))
 
 	// limit to 5 or 10 best
 	if len(paths) > s.lim {
 		paths = paths[:s.lim]
 	}
 
+	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
 	r.Paths = paths
 	s.remotes[remote] = r
 }
@@ -130,7 +156,7 @@ func (s *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	defer s.mtx.RUnlock()
 	r, ok := s.remotes[remote]
 	if !ok || len(r.Paths) == 0 {
-		fmt.Println("No Paths found!")
+		//fmt.Println("No Paths found!")
 		return nil
 	}
 	s.idx += 1
@@ -179,23 +205,26 @@ func (s *SmartReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := s.rrs.remotes[remote]
 	if ok && len(r.Paths) > 0 {
+		fmt.Println("No Paths found!")
 		return
 	}
 
 	r.Seen = time.Now()
 	paths, err := s.rrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
+		fmt.Println("ERORR while querying Paths!")
 		return
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
-	r.Paths = filterPaths(paths, s.cid)
+	fmt.Printf("Found %d path(s)!\n", len(r.Paths))
+	paths = filterPaths(paths, s.cid)
 
 	// limit to 5 or 10 best
 	if len(paths) > s.rrs.lim {
 		paths = paths[:s.rrs.lim]
 	}
 
+	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
 	r.Paths = paths
 	s.rrs.remotes[remote] = r
 }
