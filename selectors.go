@@ -121,24 +121,24 @@ func (s *RRReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := s.remotes[remote]
 	if ok && len(r.Paths) > 0 {
-		fmt.Println("No Paths found!")
+		//fmt.Println("Paths already populated!")
 		return
 	}
 
 	r.Seen = time.Now()
 	paths, err := s.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
-		fmt.Println("ERORR while querying Paths!")
+		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
 		return
 	}
-	fmt.Printf("Found %d path(s)!\n", len(r.Paths))
+	fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	// limit to 5 or 10 best
 	if len(paths) > s.lim {
 		paths = paths[:s.lim]
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
+	fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
 	r.Paths = paths
 	s.remotes[remote] = r
 }
@@ -205,18 +205,18 @@ func (s *SmartReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := s.rrs.remotes[remote]
 	if ok && len(r.Paths) > 0 {
-		fmt.Println("No Paths found!")
+		//fmt.Println("Paths already populated!")
 		return
 	}
 
 	r.Seen = time.Now()
 	paths, err := s.rrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
-		fmt.Println("ERORR while querying Paths!")
+		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
 		return
 	}
 
-	fmt.Printf("Found %d path(s)!\n", len(r.Paths))
+	fmt.Printf("Found %d path(s)!\n", len(paths))
 	paths = filterPaths(paths, s.cid)
 
 	// limit to 5 or 10 best
@@ -224,7 +224,7 @@ func (s *SmartReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 		paths = paths[:s.rrs.lim]
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(r.Paths))
+	fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
 	r.Paths = paths
 	s.rrs.remotes[remote] = r
 }
