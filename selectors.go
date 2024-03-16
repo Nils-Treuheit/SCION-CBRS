@@ -136,7 +136,7 @@ func NewRRReplySelector(nr_rr_paths int, rep_its int) *RRReplySelector {
 	return &RRReplySelector{
 		hctx:    pan.Host(),
 		remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
-		idx:     0,
+		idx:     1,
 		itcount: 0,
 		lim:     nr_rr_paths,
 		its:     rep_its,
@@ -148,7 +148,7 @@ func NewCBReplySelector(content_id int, nr_rr_paths int, rep_its int) *CBReplySe
 		rrrs: &RRReplySelector{
 			remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
 			hctx:    pan.Host(),
-			idx:     0,
+			idx:     1,
 			itcount: 0,
 			lim:     nr_rr_paths,
 			its:     rep_its,
@@ -167,7 +167,7 @@ func NewPathRangeReplySelector(range_start int, range_end int, content_id int, r
 			rrrs: &RRReplySelector{
 				remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
 				hctx:    pan.Host(),
-				idx:     0,
+				idx:     1,
 				itcount: 0,
 				lim:     len(pathRange),
 				its:     rep_its,
@@ -184,7 +184,7 @@ func NewSelectivePathReplySelector(selectedPaths []int, content_id int, rep_its 
 			rrrs: &RRReplySelector{
 				remotes: make(map[pan.UDPAddr]pan.RemoteEntry),
 				hctx:    pan.Host(),
-				idx:     0,
+				idx:     1,
 				itcount: 0,
 				lim:     len(selectedPaths),
 				its:     rep_its,
@@ -349,12 +349,12 @@ func (rrrs *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	}
 	if rrrs.itcount < rrrs.its {
 		rrrs.itcount += 1
-		return r.Paths[rrrs.idx-1]
-	}
-	rrrs.itcount = 0
-	rrrs.idx += 1
-	if rrrs.idx > len(r.Paths) {
-		rrrs.idx = 1
+	} else {
+		rrrs.itcount = 0
+		rrrs.idx += 1
+		if rrrs.idx > len(r.Paths) {
+			rrrs.idx = 1
+		}
 	}
 	//fmt.Printf("Choose %d. path of %d found paths!\n", s.idx, len(r.Paths))
 	return r.Paths[rrrs.idx-1]
