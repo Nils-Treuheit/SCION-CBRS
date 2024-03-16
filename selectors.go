@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"sort"
 	"sync"
@@ -194,6 +195,33 @@ func NewSelectivePathReplySelector(selectedPaths []int, content_id int, rep_its 
 	}
 }
 
+func printShowpathsMetadata(local net.IP, remote addr.IA) {
+	address, ok := os.LookupEnv("SCION_DAEMON_ADDRESS")
+	if !ok {
+		address = daemon.DefaultAPIAddress
+	}
+	dispatcher, ok := os.LookupEnv("SCION_DISPATCHER_SOCKET")
+	if !ok {
+		dispatcher = reliable.DefaultDispPath
+	}
+	var cfg showpaths.Config = showpaths.Config{
+		Local:      local,
+		Daemon:     address,
+		MaxPaths:   showpaths.DefaultMaxPaths,
+		Refresh:    false,
+		NoProbe:    false,
+		Sequence:   "",
+		Dispatcher: dispatcher,
+		Epic:       false,
+	}
+	extensivePathsResults, err := showpaths.Run(context.Background(), remote, cfg)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		extensivePathsResults.Human(os.Stdout, true, false)
+	}
+}
+
 /*
 Change Records method of the ReplySelectors
 => remotePaths are only set through Records method
@@ -212,30 +240,10 @@ func (srs *StrategicReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 		return
 	}
 
-	// Check Showpaths MetaData
-	address, ok := os.LookupEnv("SCION_DAEMON_ADDRESS")
-	if !ok {
-		address = daemon.DefaultAPIAddress
-	}
-	dispatcher, ok := os.LookupEnv("SCION_DISPATCHER_SOCKET")
-	if !ok {
-		dispatcher = reliable.DefaultDispPath
-	}
-	var cfg showpaths.Config = showpaths.Config{
-		Local:      srs.cbrs.rrrs.hctx.HostInLocalAS,
-		Daemon:     address,
-		MaxPaths:   showpaths.DefaultMaxPaths,
-		Refresh:    false,
-		NoProbe:    false,
-		Sequence:   "",
-		Dispatcher: dispatcher,
-		Epic:       false,
-	}
-	extensivePathsResults, _ := showpaths.Run(context.Background(), addr.IA(remote.IA), cfg)
-	extensivePathsResults.Human(os.Stdout, true, true)
-	// for DEBUG purposes only
-
 	r.Seen = time.Now()
+	// Check Showpaths Meta-Data Fields
+	printShowpathsMetadata(srs.cbrs.rrrs.hctx.HostInLocalAS, addr.IA(remote.IA))
+	// TODO: create better method to populate Meta-Data Fields
 	paths, err := srs.cbrs.rrrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
 		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
@@ -245,13 +253,15 @@ func (srs *StrategicReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	paths = filterPaths(paths, srs.cbrs.cid)
 
-	// limit to 5 or 10 best
-	if len(paths) > srs.cbrs.rrrs.lim {
-		paths = paths[:srs.cbrs.rrrs.lim]
+	var newPaths []*pan.Path
+	for _, idx := range srs.pathIDs {
+		if len(paths) > idx {
+			newPaths = append(newPaths, paths[idx])
+		}
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
-	r.Paths = paths
+	fmt.Printf("Inserted %d path(s) into the record!\n", len(newPaths))
+	r.Paths = newPaths
 	srs.cbrs.rrrs.remotes[remote] = r
 }
 
@@ -270,6 +280,9 @@ func (cbrs *CBReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	}
 
 	r.Seen = time.Now()
+	// Check Showpaths Meta-Data Fields
+	printShowpathsMetadata(cbrs.rrrs.hctx.HostInLocalAS, addr.IA(remote.IA))
+	// TODO: create better method to populate Meta-Data Fields
 	paths, err := cbrs.rrrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
 		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
@@ -326,20 +339,25 @@ func (s *RRReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 Implement round-robin path selection
 -> this should allow to emulate the default ReplySelector when round-robin path limit is set to 1
 */
-func (s *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-	r, ok := s.remotes[remote]
+func (rrrs *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
+	rrrs.mtx.RLock()
+	defer rrrs.mtx.RUnlock()
+	r, ok := rrrs.remotes[remote]
 	if !ok || len(r.Paths) == 0 {
 		//fmt.Println("No Paths found!")
 		return nil
 	}
-	s.idx += 1
-	if s.idx > len(r.Paths) {
-		s.idx = 1
+	if rrrs.itcount < rrrs.its {
+		rrrs.itcount += 1
+		return r.Paths[rrrs.idx-1]
+	}
+	rrrs.itcount = 0
+	rrrs.idx += 1
+	if rrrs.idx > len(r.Paths) {
+		rrrs.idx = 1
 	}
 	//fmt.Printf("Choose %d. path of %d found paths!\n", s.idx, len(r.Paths))
-	return r.Paths[s.idx-1]
+	return r.Paths[rrrs.idx-1]
 }
 
 /*

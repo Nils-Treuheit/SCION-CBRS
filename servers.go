@@ -32,7 +32,7 @@ func main() {
 
 	// cl-arg based strategy selection for benchmarks
 	if len(os.Args) < 2 {
-		fmt.Println("Execute smart round robin approach:")
+		fmt.Println("Execute selective content-based round robin approach:")
 		startServs(cdrs, vsrs, gwrs)
 	} else {
 		command := os.Args[1]
