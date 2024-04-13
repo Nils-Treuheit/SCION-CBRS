@@ -18,14 +18,14 @@ import (
 )
 
 func main() {
-	var rep_its int = 10
+	var rep_its int = 100
 	var nr_rr_paths int = 5
 
-	// reply selector for content distribution
-	var cdrs pan.ReplySelector = NewSelectivePathReplySelector([]int{1, 3, 5, 7}, 1, rep_its)
-
 	// reply selector for video streaming
-	var vsrs pan.ReplySelector = NewSelectivePathReplySelector([]int{2, 4, 6, 8}, 1, rep_its)
+	var vsrs pan.ReplySelector = NewSelectivePathReplySelector(1, []int{2, 4, 6, 8}, rep_its)
+
+	// reply selector for content distribution
+	var cdrs pan.ReplySelector = NewSelectivePathReplySelector(1, []int{1, 3, 5, 7}, rep_its)
 
 	// reply selector for general web services
 	var gwrs pan.ReplySelector = NewCBReplySelector(3, 1, rep_its)
@@ -70,8 +70,8 @@ func main() {
 			gwrs = NewCBReplySelector(2, nr_rr_paths, rep_its)
 		case "prrs":
 			fmt.Println("Execute simple path range strategy reply selector approach:")
-			cdrs = NewPathRangeReplySelector(1, 4, 1, rep_its)
-			vsrs = NewPathRangeReplySelector(4, 7, 1, rep_its)
+			vsrs = NewPathRangeReplySelector(1, []int{4, 7}, rep_its)
+			cdrs = NewPathRangeReplySelector(1, []int{1, 4}, rep_its)
 			gwrs = NewCBReplySelector(3, 1, rep_its)
 		default:
 			fmt.Println("Your ReplySelector Strategy has not been implemented!")

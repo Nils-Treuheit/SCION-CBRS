@@ -2,17 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import sys
-
 PROXIES = {
     'http': 'http://127.0.0.1:8888/skip.pac',
     'https': 'https://127.0.0.1:8888/skip.pac',
 }
 
 
-def fetch_and_time(url):
-    global PROXIES
+def fetch_and_time(url, proxies=PROXIES):
     start_time = time.time()
-    response = requests.get(url,proxies=PROXIES)
+    response = requests.get(url,proxies=proxies)
     elapsed_time = time.time() - start_time
     return response, elapsed_time
 

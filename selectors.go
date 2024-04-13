@@ -60,7 +60,7 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 			//fmt.Printf("%d. Path's Latencies:", idx+1)
 			//fmt.Println(paths[idx].Metadata.Latency)
 			lat, _ := paths[idx].Metadata.LatencySum()
-			if lat.Milliseconds() <= 20 {
+			if lat.Milliseconds() <= 25 {
 				filtered = append(filtered, paths[idx])
 			}
 		}
@@ -157,8 +157,10 @@ func NewCBReplySelector(content_id int, nr_rr_paths int, rep_its int) *CBReplySe
 	}
 }
 
-func NewPathRangeReplySelector(range_start int, range_end int, content_id int, rep_its int) *StrategicReplySelector {
+func NewPathRangeReplySelector(content_id int, prange []int, rep_its int) *StrategicReplySelector {
 	var pathRange []int
+	range_start := prange[0]
+	range_end := prange[1]
 	for val := range_start; val < range_end; val++ {
 		pathRange = append(pathRange, val)
 	}
@@ -178,7 +180,7 @@ func NewPathRangeReplySelector(range_start int, range_end int, content_id int, r
 	}
 }
 
-func NewSelectivePathReplySelector(selectedPaths []int, content_id int, rep_its int) *StrategicReplySelector {
+func NewSelectivePathReplySelector(content_id int, selectedPaths []int, rep_its int) *StrategicReplySelector {
 	return &StrategicReplySelector{
 		cbrs: &CBReplySelector{
 			rrrs: &RRReplySelector{
@@ -252,12 +254,16 @@ func (srs *StrategicReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	paths = filterPaths(paths, srs.cbrs.cid)
+	fmt.Printf("Filtered out %d paths.\n", len(paths))
 
 	var newPaths []*pan.Path
+	//for did, idx := range srs.pathIDs {
 	for _, idx := range srs.pathIDs {
+		//fmt.Printf("%d. Path ID is %d ", did, idx)
 		if len(paths) > idx {
 			newPaths = append(newPaths, paths[idx])
 		}
+		//fmt.Printf("and new paths array is now %d elements long.\n", len(newPaths))
 	}
 
 	fmt.Printf("Inserted %d path(s) into the record!\n", len(newPaths))
@@ -291,6 +297,7 @@ func (cbrs *CBReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	paths = filterPaths(paths, cbrs.cid)
+	fmt.Printf("Filtered out %d paths.\n", len(paths))
 
 	// limit to 5 or 10 best
 	if len(paths) > cbrs.rrrs.lim {
