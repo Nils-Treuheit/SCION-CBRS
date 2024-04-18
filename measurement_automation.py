@@ -4,7 +4,7 @@
 - check if urls in main-method and proxies are correct  
 -> run program in terminal like this: 
 
-   python measurement_automation.py 100 0 1
+   python measurement_automation.py 100 s 1
 
  first argument => how many fetch runs to approximate stable average
  second argument => flag for runtime mode 0 = Sequential, 1 = Parallel
@@ -12,9 +12,12 @@
 '''
 from measure_web_fetch import fetch_and_time
 import concurrent.futures as thread_lib
+from os import system
+from time import time
+from sys import argv
 import pandas as pd
 import numpy as np
-from sys import argv
+
 PROXIES = {
     'http': 'http://127.0.0.1:8888/skip.pac',
     'https': 'https://127.0.0.1:8888/skip.pac',
@@ -80,8 +83,13 @@ def main(runs, fetchmode, debug):
          [website+":8181/"+suffix for suffix in [
           "sample-image","sample-gif",
           "sample-audio","sample-video"]]
+    start = time()
     data = fetch_urls_in_parallel(urls, runs) if fetchmode==PARALLEL else fetch_urls_sequential(urls, runs, debug)
-    data.to_csv("fetch_times.csv")    
+    end = time()
+    print("The whole",("Parallel" if fetchmode==PARALLEL else "Sequential"),f"Fetching Benchmark took {end-start} seconds.")
+    csv_file = ("par_" if fetchmode==PARALLEL else "seq_")+"fetch_times.csv"
+    data.to_csv(csv_file)  
+    system(f"python plot_results.py {csv_file}")
     
 
 if __name__ == "__main__":
@@ -91,9 +99,10 @@ if __name__ == "__main__":
 
     if len(argv)>1:
         runs = int(argv[1])
-    if len(argv)>2 and not(argv[2]==0):
+    if len(argv)>2 and ('p' in argv[2].lower() or argv[2]=='1'):
         fetchmode = PARALLEL
-    if len(argv)>3 and argv[3]==0:
+    if fetchmode==PARALLEL or (len(argv)>3 and int(argv[3])==0):
         debug = False
 
+    print("Run Fetch Program "+("in parallel " if fetchmode==PARALLEL else "sequentially ")+("with" if debug else "without")+" debug output")
     main(runs, fetchmode, debug)

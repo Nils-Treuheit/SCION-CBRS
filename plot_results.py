@@ -1,17 +1,31 @@
 import matplotlib.pyplot as plt
+from sys import argv
 import pandas as pd
+import numpy as np
+
 
 filename = "fetch_times.csv"
-data = pd.read_csv(filename)
+if len(argv)>1: filename = argv[1]
+data = pd.read_csv(filename, index_col=0)
 
 for col in data.columns:
     fetches = len(data[col])
     successful = fetches-data[col].isna().sum()
     fetch_times = data[col][~data[col].isna()] 
-    plt.plot(fetch_times,label=col)
+    print("Fetching",col,"results:")
+    print("=> The average fetch time was {:.9f} seconds".format(np.mean(fetch_times)))
+    print("=> The median fetch time was {:.9f} seconds".format(np.median(fetch_times)))
+    print("=> The standard deviation was {:.6f}".format(np.std(fetch_times)))
+    print("=> The fastest fetch took {:.9f}".format(np.min(fetch_times)))
+    print("=> The slowest fetch took {:.9f}".format(np.max(fetch_times)))
+    plt.plot(fetch_times,label=col.split("/")[-1])
 
-plt.title("URL Fetch Times")
+plt.suptitle(("Parallel " if "par" in filename else "Sequential ")+"Fetching Stats")
+plt.title(f"URL Fetch Times from {data.columns[0]}")
 plt.xlabel("Fetch ID")
 plt.ylabel("Time (sec)")
-plt.legend()
+plt.yscale('log')
+plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1))
+plt.tight_layout()
+plt.savefig(filename.split("_")[0]+"_fetch_stats.png")
 plt.show()
