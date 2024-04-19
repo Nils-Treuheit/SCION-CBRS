@@ -89,6 +89,99 @@ It took 10682.343649626 seconds to fetch benchmark http://www.scion-sample.org:8
 -> Was fetched 100 succesfully!
 
 The whole Sequential Fetching Benchmark took 11547.404619693756 seconds.
+The whole Sequential Fetching Benchmark took 3h 12min 27sec 404.619693756 ms.
 
 
 
+python measurement_automation.py 100 p
+Run Fetch Program in parallel without debug output
+
+Fetching http://www.scion-sample.org/ results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.079034116 seconds
+=> The median fetch time was 0.066032648 seconds
+=> The standard deviation was 0.093951
+=> The fastest fetch took 0.063542366
+=> The slowest fetch took 1.002688408
+
+Fetching http://www.scion-sample.org/favicon.ico results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.165134044 seconds
+=> The median fetch time was 0.147072911 seconds
+=> The standard deviation was 0.114965
+=> The fastest fetch took 0.089647532
+=> The slowest fetch took 1.224160910
+
+Fetching http://www.scion-sample.org/hello-world results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.076369891 seconds
+=> The median fetch time was 0.064493060 seconds
+=> The standard deviation was 0.100138
+=> The fastest fetch took 0.059726954
+=> The slowest fetch took 1.066152096
+
+Fetching http://www.scion-sample.org/sample-json results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.076342678 seconds
+=> The median fetch time was 0.064758897 seconds
+=> The standard deviation was 0.095744
+=> The fastest fetch took 0.060549259
+=> The slowest fetch took 1.023081779
+
+Fetching http://www.scion-sample.org/sample-text results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.077664535 seconds
+=> The median fetch time was 0.065755129 seconds
+=> The standard deviation was 0.099671
+=> The fastest fetch took 0.062381268
+=> The slowest fetch took 1.066434622
+
+Fetching http://www.scion-sample.org:8899/SCION_Lec.m3u8 results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.081549065 seconds
+=> The median fetch time was 0.068148017 seconds
+=> The standard deviation was 0.089427
+=> The fastest fetch took 0.064526796
+=> The slowest fetch took 0.957564592
+
+Fetching http://www.scion-sample.org:8899/SCION_Lec_100.m4s results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 1.245342259 seconds
+=> The median fetch time was 1.224153280 seconds
+=> The standard deviation was 0.350039
+=> The fastest fetch took 0.225962877
+=> The slowest fetch took 2.226684570
+
+Fetching http://www.scion-sample.org:8181/sample-image results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 0.074166148 seconds
+=> The median fetch time was 0.064329386 seconds
+=> The standard deviation was 0.091302
+=> The fastest fetch took 0.061404705
+=> The slowest fetch took 0.982063770
+
+Fetching http://www.scion-sample.org:8181/sample-gif results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 1.650943873 seconds
+=> The median fetch time was 1.596756339 seconds
+=> The standard deviation was 0.411716
+=> The fastest fetch took 1.024862051
+=> The slowest fetch took 2.789642811
+
+Fetching http://www.scion-sample.org:8181/sample-audio results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 8.202828226 seconds
+=> The median fetch time was 8.069264770 seconds
+=> The standard deviation was 1.647893
+=> The fastest fetch took 2.575306416
+=> The slowest fetch took 13.019143820
+
+Fetching http://www.scion-sample.org:8181/sample-video results:
+=> 100.0000% of all URL fetches have been successfull.
+=> The average fetch time was 105.478943944 seconds
+=> The median fetch time was 103.330547452 seconds
+=> The standard deviation was 11.378964
+=> The fastest fetch took 90.313641071
+=> The slowest fetch took 152.694625854
+
+The whole Parallel Fetching Benchmark took 10548.671305179596 seconds.
