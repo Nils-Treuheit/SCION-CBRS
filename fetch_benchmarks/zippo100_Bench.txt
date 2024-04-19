@@ -1,0 +1,94 @@
+python measurement_automation.py 100 s 1
+Run Fetch Program sequentially with debug output
+It took 6.546643019 seconds to fetch benchmark http://www.scion-sample.org/
+-> The average fetch time was 0.065466430 seconds
+-> The median fetch time was 0.065444231 seconds
+-> The standard deviation was 0.001134
+-> The fastest fetch took 0.062357426
+-> The slowest fetch took 0.072343826
+-> Was fetched 100 succesfully!
+
+It took 16.727225780 seconds to fetch benchmark http://www.scion-sample.org/favicon.ico
+-> The average fetch time was 0.167272258 seconds
+-> The median fetch time was 0.155624270 seconds
+-> The standard deviation was 0.039607
+-> The fastest fetch took 0.099627495
+-> The slowest fetch took 0.277755022
+-> Was fetched 100 succesfully!
+
+It took 6.468254805 seconds to fetch benchmark http://www.scion-sample.org/hello-world
+-> The average fetch time was 0.064682548 seconds
+-> The median fetch time was 0.064291120 seconds
+-> The standard deviation was 0.002154
+-> The fastest fetch took 0.062997341
+-> The slowest fetch took 0.082719564
+-> Was fetched 100 succesfully!
+
+It took 6.440172911 seconds to fetch benchmark http://www.scion-sample.org/sample-json
+-> The average fetch time was 0.064401729 seconds
+-> The median fetch time was 0.064259887 seconds
+-> The standard deviation was 0.001080
+-> The fastest fetch took 0.063118935
+-> The slowest fetch took 0.072879553
+-> Was fetched 100 succesfully!
+
+It took 6.525761604 seconds to fetch benchmark http://www.scion-sample.org/sample-text
+-> The average fetch time was 0.065257616 seconds
+-> The median fetch time was 0.065032959 seconds
+-> The standard deviation was 0.001632
+-> The fastest fetch took 0.063319683
+-> The slowest fetch took 0.078533411
+-> Was fetched 100 succesfully!
+
+It took 6.928893328 seconds to fetch benchmark http://www.scion-sample.org:8899/SCION_Lec.m3u8
+-> The average fetch time was 0.069288933 seconds
+-> The median fetch time was 0.067760587 seconds
+-> The standard deviation was 0.009779
+-> The fastest fetch took 0.066146851
+-> The slowest fetch took 0.163784981
+-> Was fetched 100 succesfully!
+
+It took 90.954569340 seconds to fetch benchmark http://www.scion-sample.org:8899/SCION_Lec_100.m4s
+-> The average fetch time was 0.909545693 seconds
+-> The median fetch time was 0.849460363 seconds
+-> The standard deviation was 0.232387
+-> The fastest fetch took 0.596056223
+-> The slowest fetch took 1.918993711
+-> Was fetched 100 succesfully!
+
+It took 6.478073359 seconds to fetch benchmark http://www.scion-sample.org:8181/sample-image
+-> The average fetch time was 0.064780734 seconds
+-> The median fetch time was 0.063417435 seconds
+-> The standard deviation was 0.009130
+-> The fastest fetch took 0.060695410
+-> The slowest fetch took 0.153181076
+-> Was fetched 100 succesfully!
+
+It took 116.312359095 seconds to fetch benchmark http://www.scion-sample.org:8181/sample-gif
+-> The average fetch time was 1.163123591 seconds
+-> The median fetch time was 1.134487271 seconds
+-> The standard deviation was 0.257075
+-> The fastest fetch took 0.670779705
+-> The slowest fetch took 2.164438009
+-> Was fetched 100 succesfully!
+
+It took 601.018163919 seconds to fetch benchmark http://www.scion-sample.org:8181/sample-audio
+-> The average fetch time was 6.010181639 seconds
+-> The median fetch time was 5.873127222 seconds
+-> The standard deviation was 1.224550
+-> The fastest fetch took 3.643925428
+-> The slowest fetch took 10.702871561
+-> Was fetched 100 succesfully!
+
+It took 10682.343649626 seconds to fetch benchmark http://www.scion-sample.org:8181/sample-video
+-> The average fetch time was 106.823436496 seconds
+-> The median fetch time was 105.819834113 seconds
+-> The standard deviation was 6.592615
+-> The fastest fetch took 94.640530586
+-> The slowest fetch took 125.242223024
+-> Was fetched 100 succesfully!
+
+The whole Sequential Fetching Benchmark took 11547.404619693756 seconds.
+
+
+

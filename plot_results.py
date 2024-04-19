@@ -7,12 +7,14 @@ import numpy as np
 filename = "fetch_times.csv"
 if len(argv)>1: filename = argv[1]
 data = pd.read_csv(filename, index_col=0)
+data.index = range(len(data.index))
 
 for col in data.columns:
     fetches = len(data[col])
-    successful = fetches-data[col].isna().sum()
+    successfull = fetches-data[col].isna().sum()
     fetch_times = data[col][~data[col].isna()] 
     print("Fetching",col,"results:")
+    print("=> {:.4f}% of all URL fetches have been successfull.".format(successfull/fetches * 100))
     print("=> The average fetch time was {:.9f} seconds".format(np.mean(fetch_times)))
     print("=> The median fetch time was {:.9f} seconds".format(np.median(fetch_times)))
     print("=> The standard deviation was {:.6f}".format(np.std(fetch_times)))

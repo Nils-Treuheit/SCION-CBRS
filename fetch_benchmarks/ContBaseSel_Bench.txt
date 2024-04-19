@@ -1,0 +1,114 @@
+Test mturs limited to 5 paths with 100 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.1628718376159668 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.6901061534881592 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.20517730712890625 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.15414881706237793 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.1603260040283203 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 1.0905873775482178 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 14.752103090286255 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 274.43973302841187 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.8168227672576904 seconds
+
+
+Test mturs limited to 5 paths with 1000 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 1.4435338973999023 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.7005710601806641 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19346833229064941 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.14068603515625 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.15555882453918457 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.3787076473236084 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 0.9735321998596191 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 105.77706122398376 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.16271567344665527 seconds
+
+
+Test mturs limited to 10 paths with 100 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 1.526665449142456 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.6945497989654541 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.2014908790588379 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.15294742584228516 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.15611910820007324 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 1.333376407623291 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 14.422365665435791 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 309.17016410827637 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.6547160148620605 seconds
+
+
+Test mturs limited to 10 paths with 1000 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.9310264587402344 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.703528642654419 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19746756553649902 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.15343570709228516 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.1506030559539795 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.38184356689453125 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 0.9001667499542236 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 121.25218033790588 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.15717411041259766 seconds
+
+
+-------------------------------------------------------------------------------------------------------
+
+
+Test latrs limited to 5 paths with 100 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.8384268283843994 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.6814756393432617 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19633769989013672 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.13726806640625 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.15824270248413086 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.488828182220459 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 9.841675996780396 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 245.67074608802795 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.16298246383666992 seconds
+
+
+Test latrs limited to 5 paths with 1000 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.1593761444091797 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.7344939708709717 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19562315940856934 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.137434720993042 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.15913081169128418 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.36757421493530273 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 0.560518741607666 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 97.32900929450989 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.1561880111694336 seconds
+
+
+Test latrs limited to 10 paths with 100 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.9504220485687256 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.7122499942779541 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19337868690490723 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.15415096282958984 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.16059517860412598 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.4696676731109619 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 7.848511457443237 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 214.42239427566528 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 0.15595436096191406 seconds
+
+
+Test latrs limited to 10 paths with 1000 reps
+
+python measure_web_fetch.py http://www.scion-sample.org
+Time taken to fetch http://www.scion-sample.org: 0.1659696102142334 seconds
+Time taken to fetch https://videojs.com/html5-video-support/: 0.681854248046875 seconds
+Time taken to fetch http://www.scion-sample.org/favicon.ico: 0.19246315956115723 seconds
+Time taken to fetch https://vjs.zencdn.net/7.15.4/video-js.css: 0.1432201862335205 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-image: 0.17793726921081543 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-gif: 0.3702361583709717 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-audio: 0.662581205368042 seconds
+Time taken to fetch http://www.scion-sample.org:8181/sample-video: 109.35069704055786 seconds
+Time taken to fetch http://www.scion-sample.org:8899/SCION_Lec.m3u8: 1.4222381114959717 seconds
+

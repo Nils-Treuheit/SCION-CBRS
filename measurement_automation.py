@@ -4,6 +4,7 @@
 - check if urls in main-method and proxies are correct  
 -> run program in terminal like this: 
 
+   python measurement_automation.py 100 p
    python measurement_automation.py 100 s 1
 
  first argument => how many fetch runs to approximate stable average
