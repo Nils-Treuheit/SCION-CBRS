@@ -1,8 +1,8 @@
 # SCION-CDN
-Create a Benchmark to measure the impact of different communication paths on the content delivery of small SCION network using 2 ASes with several paths and hops between them. 
+The goal of this project is to create an infrastructure and benchmarks to measure the impact of different communication paths on the content delivery within the SCION network using 2 ASes with several paths and hops between them. The project was build up on my prior work with SCION [(SCION-TV)](https://github.com/Nils-Treuheit/SCION-TV). Both projects are inspired by the work on the [shttp scion-app example](https://github.com/netsec-ethz/scion-apps/tree/master/_examples/shttp) and especially this project relies heavily on the [scion-apps pakage pan](https://github.com/netsec-ethz/scion-apps/tree/master/pkg/pan). 
 
 ## Disclaimer
-Content Files are purpose-oriented deviations of cited sources to benchmark different content network traffic. Content files will not be uploaded to the repository and might only be temporarily available under the sourced links as I do not plan to regular update them and have to refrain from redistributing content of other creators on the web. The website text is partially generated with ChatGPT and not fact checked as I just needed a larger chunk of text to download. <br><br>
+Content Files are purpose-oriented deviations of cited sources to benchmark different content network traffic. Content files will not be uploaded to the repository and might only be temporarily available under the sourced links as I do not plan to regular update them and have to refrain from redistributing content of other creators on the web. The website text is partially generated with ChatGPT and not fact checked as I just needed a larger corpus of text to download. <br><br>
 
 ## Results
 You can find the results of my benchmarks and test in the [benchmark folder](./fetch_benchmarks)<br><br>
@@ -25,7 +25,11 @@ echo "<scion-address> www.scion-sample.org" >> /etc/hosts
 ``` bash
 git clone https://github.com/Nils-Treuheit/SCION-CDN
 ```
-Make sure the local and remote machine are located in different networks and more importantly also be assigned to different SCION attachment points! 
+**Make sure the local and remote machine are located in different networks and more importantly also be assigned to different SCION attachment points!**<br><br> 
+Please also note that the [selectors.go](./selectors.go) requires access to numerous functions found in the scion-apps pkg pan. The functions have not been changed only their names have been capitalized to expose them to be used in this external project code. If the scion-apps repository was not yet changed you might have to replicate those changes again on your local scion-apps repository on the remote machine. Also please edit the last line in the [go.mod](./go.mod) file accordingly:
+``` go
+replace github.com/netsec-ethz/scion-apps => <adapted/scion-apps/repo/path>
+```
 <br><br>
 
 ## Runtime

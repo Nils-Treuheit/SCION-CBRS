@@ -8,4 +8,4 @@
 *.ico
 *website/*.png
 *stream_files/*.png
-*__pycache__*
+*__pycache__/*.*
