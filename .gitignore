@@ -6,4 +6,6 @@
 *.gif
 *.mp3
 *.ico
-*.png
+*website/*.png
+*stream_files/*.png
+*__pycache__*
