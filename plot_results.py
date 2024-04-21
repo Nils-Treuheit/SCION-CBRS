@@ -13,7 +13,7 @@ for col in data.columns:
     fetches = len(data[col])
     successfull = fetches-data[col].isna().sum()
     fetch_times = data[col][~data[col].isna()] 
-    print("Fetching",col,"results:")
+    print("\nFetching",col,"results:")
     print("=> {:.4f}% of all URL fetches have been successfull.".format(successfull/fetches * 100))
     print("=> The average fetch time was {:.9f} seconds".format(np.mean(fetch_times)))
     print("=> The median fetch time was {:.9f} seconds".format(np.median(fetch_times)))
