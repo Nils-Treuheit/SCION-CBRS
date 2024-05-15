@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	var rep_its int = 100
+	var rep_its int = 1000
 	var nr_rr_paths int = 5
 
 	// reply selector for video streaming

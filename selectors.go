@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"os"
 	"sort"
@@ -33,8 +32,9 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 	case 0:
 		var mtus []uint16
 		for idx := 0; idx < len(paths); idx++ {
-			//fmt.Printf("%d. Path's MTU:", idx+1)
-			//fmt.Println(paths[idx].Metadata.MTU)
+			// DEBUG Output:
+			// fmt.Printf("%d. Path's MTU:", idx+1)
+			// fmt.Println(paths[idx].Metadata.MTU)
 			var mtu uint16 = paths[idx].Metadata.MTU
 			if mtu >= 1400 {
 				filtered = append(filtered, paths[idx])
@@ -47,18 +47,16 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 	case 1:
 		for idx := 0; idx < len(paths); idx++ {
 			// DEBUG: print non empty latency vectors
-			if len(paths[idx].Metadata.Latency) > 0 {
-				lats := paths[idx].Metadata.Latency
-				for i := 0; i < len(lats); i++ {
-					if lats[i] != 0 {
-						fmt.Printf("%d. Path's Latencies:", idx+1)
-						fmt.Println(lats)
-						break
-					}
-				}
-			}
-			//fmt.Printf("%d. Path's Latencies:", idx+1)
-			//fmt.Println(paths[idx].Metadata.Latency)
+			// if len(paths[idx].Metadata.Latency) > 0 {
+			// 	lats := paths[idx].Metadata.Latency
+			// 	for i := 0; i < len(lats); i++ {
+			// 		if lats[i] != 0 {
+			// 			fmt.Printf("%d. Path's Latencies:", idx+1)
+			// 			fmt.Println(lats)
+			// 			break
+			// 		}
+			// 	}
+			// }
 			lat, _ := paths[idx].Metadata.LatencySum()
 			if lat.Milliseconds() <= 25 {
 				filtered = append(filtered, paths[idx])
@@ -72,18 +70,16 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 	case 2:
 		for idx := 0; idx < len(paths); idx++ {
 			// DEBUG: print non empty bandwidths vectors
-			if len(paths[idx].Metadata.Bandwidth) > 0 {
-				bws := paths[idx].Metadata.Bandwidth
-				for i := 0; i < len(bws); i++ {
-					if bws[i] != 0 {
-						fmt.Printf("%d. Path's Bandwidths:", idx+1)
-						fmt.Println(bws)
-						break
-					}
-				}
-			}
-			//fmt.Printf("%d. Path's Bandwidths:", idx+1)
-			//fmt.Println(paths[idx].Metadata.Bandwidth)
+			// if len(paths[idx].Metadata.Bandwidth) > 0 {
+			// 	bws := paths[idx].Metadata.Bandwidth
+			// 	for i := 0; i < len(bws); i++ {
+			// 		if bws[i] != 0 {
+			// 			fmt.Printf("%d. Path's Bandwidths:", idx+1)
+			// 			fmt.Println(bws)
+			// 			break
+			// 		}
+			// 	}
+			// }
 			bw, _ := paths[idx].Metadata.BandwidthMin()
 			if bw >= 100000 {
 				filtered = append(filtered, paths[idx])
@@ -104,8 +100,8 @@ func filterPaths(paths pan.PathsMRU, cid int) pan.PathsMRU {
 			return hopPaths[i].SubsetOf(hopPaths[j])
 		})
 	}
-
-	//fmt.Printf("Found %d paths viable paths!\n", len(filtered))
+	// DEBUG Output:
+	// fmt.Printf("Found %d paths viable paths!\n", len(filtered))
 	return filtered
 }
 
@@ -197,7 +193,7 @@ func NewSelectivePathReplySelector(content_id int, selectedPaths []int, rep_its 
 	}
 }
 
-func printShowpathsMetadata(local net.IP, remote addr.IA) {
+func printShowpathsMetadata(local net.IP, remote addr.IA) *showpaths.Result {
 	address, ok := os.LookupEnv("SCION_DAEMON_ADDRESS")
 	if !ok {
 		address = daemon.DefaultAPIAddress
@@ -218,10 +214,13 @@ func printShowpathsMetadata(local net.IP, remote addr.IA) {
 	}
 	extensivePathsResults, err := showpaths.Run(context.Background(), remote, cfg)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		extensivePathsResults.Human(os.Stdout, true, false)
+		// DEBUG Output:
+		// extensivePathsResults.Human(os.Stdout, true, false)
+		return extensivePathsResults
 	}
+	// DEBUG Output:
+	// fmt.Println(err)
+	return nil
 }
 
 /*
@@ -238,7 +237,8 @@ func (srs *StrategicReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := srs.cbrs.rrrs.remotes[remote]
 	if ok && len(r.Paths) > 0 {
-		//fmt.Println("Paths already populated!")
+		// DEBUG Output:
+		// fmt.Println("Paths already populated!")
 		return
 	}
 
@@ -248,29 +248,36 @@ func (srs *StrategicReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	// TODO: create better method to populate Meta-Data Fields
 	paths, err := srs.cbrs.rrrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
-		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
+		// DEBUG Output:
+		// fmt.Println("ERORR while querying Paths, likely: No Paths found!")
 		return
 	}
-	fmt.Printf("Found %d path(s)!\n", len(paths))
+	// DEBUG Output:
+	// fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	paths = filterPaths(paths, srs.cbrs.cid)
-	fmt.Printf("Filtered out %d paths.\n", len(paths))
+	// DEBUG Output:
+	// fmt.Printf("Filtered out %d paths.\n", len(paths))
 
 	var newPaths []*pan.Path
 	//for did, idx := range srs.pathIDs {
 	for _, idx := range srs.pathIDs {
-		//fmt.Printf("%d. Path ID is %d ", did, idx)
+		// DEBUG Output:
+		// fmt.Printf("%d. Path ID is %d ", did, idx)
 		if len(paths) > idx {
 			newPaths = append(newPaths, paths[idx])
 		}
-		//fmt.Printf("and new paths array is now %d elements long.\n", len(newPaths))
+		// DEBUG Output:
+		// fmt.Printf("and new paths array is now %d elements long.\n", len(newPaths))
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(newPaths))
+	// DEBUG Output:
+	// fmt.Printf("Inserted %d path(s) into the record!\n", len(newPaths))
 	r.Paths = newPaths
 	srs.cbrs.rrrs.remotes[remote] = r
 }
 
+// for debugging see DEBUG Output implementation above
 func (cbrs *CBReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	if path == nil {
 		return
@@ -281,7 +288,6 @@ func (cbrs *CBReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := cbrs.rrrs.remotes[remote]
 	if ok && len(r.Paths) > 0 {
-		//fmt.Println("Paths already populated!")
 		return
 	}
 
@@ -291,20 +297,16 @@ func (cbrs *CBReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 	// TODO: create better method to populate Meta-Data Fields
 	paths, err := cbrs.rrrs.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
-		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
 		return
 	}
-	fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	paths = filterPaths(paths, cbrs.cid)
-	fmt.Printf("Filtered out %d paths.\n", len(paths))
 
 	// limit to 5 or 10 best
 	if len(paths) > cbrs.rrrs.lim {
 		paths = paths[:cbrs.rrrs.lim]
 	}
 
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
 	r.Paths = paths
 	cbrs.rrrs.remotes[remote] = r
 }
@@ -320,24 +322,27 @@ func (s *RRReplySelector) Record(remote pan.UDPAddr, path *pan.Path) {
 
 	r, ok := s.remotes[remote]
 	if ok && len(r.Paths) > 0 {
-		//fmt.Println("Paths already populated!")
+		// DEBUG Output:
+		// fmt.Println("Paths already populated!")
 		return
 	}
 
 	r.Seen = time.Now()
 	paths, err := s.hctx.QueryPaths(context.Background(), remote.IA)
 	if err != nil {
-		fmt.Println("ERORR while querying Paths, likely: No Paths found!")
+		// DEBUG Output:
+		// fmt.Println("ERORR while querying Paths, likely: No Paths found!")
 		return
 	}
-	fmt.Printf("Found %d path(s)!\n", len(paths))
+	// DEBUG Output:
+	// fmt.Printf("Found %d path(s)!\n", len(paths))
 
 	// limit to 5 or 10 best
 	if len(paths) > s.lim {
 		paths = paths[:s.lim]
 	}
-
-	fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
+	// DEBUG Output:
+	// fmt.Printf("Inserted %d path(s) into the record!\n", len(paths))
 	r.Paths = paths
 	s.remotes[remote] = r
 }
@@ -351,7 +356,8 @@ func (rrrs *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 	defer rrrs.mtx.RUnlock()
 	r, ok := rrrs.remotes[remote]
 	if !ok || len(r.Paths) == 0 {
-		//fmt.Println("No Paths found!")
+		// DEBUG Output:
+		// fmt.Println("No Paths found!")
 		return nil
 	}
 	if rrrs.itcount < rrrs.its {
@@ -363,7 +369,8 @@ func (rrrs *RRReplySelector) Path(remote pan.UDPAddr) *pan.Path {
 			rrrs.idx = 1
 		}
 	}
-	//fmt.Printf("Choose %d. path of %d found paths!\n", s.idx, len(r.Paths))
+	// DEBUG Output:
+	// fmt.Printf("Choose %d. path of %d found paths!\n", s.idx, len(r.Paths))
 	return r.Paths[rrrs.idx-1]
 }
 
@@ -373,7 +380,8 @@ as their function should be the same
 -> side note the SmartReplySelector is a wrapper of the RRReplySelector as such it just calls for the wrapped ReplySelector's behavior
 */
 func (rrrs *RRReplySelector) Initialize(local pan.UDPAddr) {
-	//fmt.Println(len(s.remotes[local].Paths))
+	// DEBUG Output:
+	// fmt.Println(len(s.remotes[local].Paths))
 }
 
 func (rrrs *RRReplySelector) PathDown(pan.PathFingerprint, pan.PathInterface) {

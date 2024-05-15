@@ -1,0 +1,26 @@
+load times http://www.scion-sample.org
+
+index.html, 10.376ms
+sample-image, 38.593ms
+sample-gif, 40.317ms
+background, 48.043ms
+sample-audio, 49.978ms
+sample-video, 74.978ms
+SCION_Lec.m3u8, 45.998ms
+SCION_Lec_000.m4s, 14.536ms
+__________________
+------------------
+total, 247ms
+idle, 50ms
+system, 36ms
+painting, 3ms
+rendereing, 19ms
+scripting, 101ms
+loading, 14ms
+
+
+lighthouse:
+First Contentful Paint, 1.2s
+Largest contentful Paint, 1.2s
+Total Blocking Time, 0s
+Speed index, 1.4s

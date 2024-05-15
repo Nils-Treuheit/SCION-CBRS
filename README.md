@@ -30,7 +30,7 @@ Please also note that the [selectors.go](./selectors.go) requires access to nume
 ``` go
 replace github.com/netsec-ethz/scion-apps => <adapted/scion-apps/repo/path>
 ```
-<br><br>
+<br>
 
 ## Runtime
 To run the benchmark execute the following commands please make sure you substitute the elements in the <code><></code> brackets. You can find a compiled list of commands in [commands.sh](./commands.sh).
