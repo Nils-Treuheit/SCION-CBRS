@@ -5,7 +5,9 @@ The goal of this project is to create an infrastructure and benchmarks to measur
 Content Files are purpose-oriented deviations of cited sources to benchmark different content network traffic. Content files will not be uploaded to the repository and might only be temporarily available under the sourced links as I do not plan to regular update them and have to refrain from redistributing content of other creators on the web. The website text is partially generated with ChatGPT and not fact checked as I just needed a larger corpus of text to download. <br><br>
 
 ## Results
-You can find the results of my benchmarks and test in the [benchmark folder](./fetch_benchmarks)<br><br>
+You can find the results of my benchmarks and test in the [benchmark folder](./fetch_benchmarks)<br>
+Benchmarks were run on a Client machine with the following specifications: OS - Ubuntu 22.04.5 LTS, RAM - 32GB, CPU - Ryzen 7700x [8Cores @ 4.5GHz], MainMemory - SSD, Network(Down/Up) - 120/16 Mbits <br><br>
+
 
 ## Installation
 This section describes how to install all necessary parts to get the benchmark up and running. You need a SCION installation with a SCION AS and a SCION apps installation, since you need to run the SCION proxy server skip and access a remote SCION AS. In case you struggle with the go installation view [go install instructions](https://go.dev/wiki/Ubuntu). Alternatively you can also find a compiled list of commands in [commands.sh](./commands.sh).<br>
