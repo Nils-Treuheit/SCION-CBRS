@@ -66,26 +66,26 @@ if len(argv)>1:
                 fig.subplots_adjust(left=0.18, right=0.96, top=0.78, bottom=0.16)
             else:
                 fig.subplots_adjust(left=0.18, right=0.70, top=0.78, bottom=0.16)
-            fig.savefig((name if overwrite else (name+'_half_A4.png')), dpi=100)
+            fig.savefig((name if overwrite else (name+'_half_A4.png')), dpi=200)
         elif res_format == ResFromat.A4_full:
             fig.set_size_inches(8,4)
             if not legend:
                 fig.subplots_adjust(left=0.09, right=0.98, top=0.87, bottom=0.13)
             else:
                 fig.subplots_adjust(left=0.09, right=0.72, top=0.87, bottom=0.13)
-            fig.savefig((name if overwrite else (name+'_full_A4.png')), dpi=200)
+            fig.savefig((name if overwrite else (name+'_full_A4.png')), dpi=400)
         elif res_format == ResFromat.HD24:
             fig.set_size_inches(20.3,11.5)
             if not legend:
                 fig.subplots_adjust(left=0.06, right=0.98, top=0.94, bottom=0.06)
             else:
                 fig.subplots_adjust(left=0.06, right=0.72, top=0.94, bottom=0.06)
-            fig.savefig((name if overwrite else (name+'_HD24.png')), dpi=184)
+            fig.savefig((name if overwrite else (name+'_HD24.png')), dpi=368)
         else:
             fig.set_size_inches(27.8,15.4)
             if not legend:
                 fig.subplots_adjust(left=0.04, right=0.98, top=0.96, bottom=0.04)
             else:
                 fig.subplots_adjust(left=0.04, right=0.72, top=0.96, bottom=0.04)
-            fig.savefig((name if overwrite else (name+'_4k32.png')), dpi=276)
+            fig.savefig((name if overwrite else (name+'_4k32.png')), dpi=552)
     
