@@ -1,4 +1,4 @@
-# SCION-CDN
+# SCION-CBRS
 The goal of this project is to create an infrastructure and benchmarks to measure the impact of different communication paths on the content delivery within the SCION network using 2 ASes with several paths and hops between them. The project was build up on my prior work with SCION [(SCION-TV)](https://github.com/Nils-Treuheit/SCION-TV). Both projects are inspired by the work on the [shttp scion-app example](https://github.com/netsec-ethz/scion-apps/tree/master/_examples/shttp) and especially this project relies heavily on the [scion-apps pakage pan](https://github.com/netsec-ethz/scion-apps/tree/master/pkg/pan). 
 
 ## Disclaimer
