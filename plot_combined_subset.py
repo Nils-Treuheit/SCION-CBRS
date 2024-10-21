@@ -12,14 +12,16 @@ class ResFromat(Enum):
     HD24 = 2
     UHD32 = 3
 
-COLORS = ["lightskyblue", 
-          "palegreen",  
-          "aqua", 
-          "lime",
-          "navy",
-          "seagreen", 
-          "royalblue", 
-          "yellowgreen"]
+#COLORS = ["lightskyblue", 
+#          "palegreen",  
+#          "aqua", 
+#          "lime",
+#          "navy",
+#          "seagreen", 
+#          "royalblue", 
+#          "yellowgreen"]
+
+COLORS = ["fuchsia","pink","plum","deeppink"]
           
 
 FILES_SUBSET = ["noRepSel_par.csv",
@@ -27,9 +29,9 @@ FILES_SUBSET = ["noRepSel_par.csv",
                 "latrs_100it_20p_par.csv",
                 "zippo_100it_4o9p_par.csv"] 
 SUBSET_IDS = ["default","latrs(5p)","latrs(20p)","zippo"]
-SELECTED_COLUMNS = ["http://www.scion-sample.org:8899/SCION_Lec_100.m4s",
-                    "http://www.scion-sample.org:8181/sample-gif"]
-NAME = "Parallel_Fetching_Results(medium_size)"
+SELECTED_COLUMNS = [#"http://www.scion-sample.org:8899/SCION_Lec_100.m4s",
+                    "http://www.scion-sample.org:8181/sample-video"]
+NAME = "Parallel_Video_Fetching_Results"
 
 legend = True if len(argv)>4 and int(argv[4])>0 else False
 overwrite = True if len(argv)>3 and int(argv[3])>0 else False
@@ -71,9 +73,9 @@ if len(argv)>1:
     if res_format == ResFromat.A4_half:
         fig.set_size_inches(4,3)
         if not legend:
-            fig.subplots_adjust(left=0.12, right=0.97, top=0.89, bottom=0.16)
+            fig.subplots_adjust(left=0.15, right=0.97, top=0.89, bottom=0.16)
         else:
-            fig.subplots_adjust(left=0.12, right=0.62, top=0.88, bottom=0.16)
+            fig.subplots_adjust(left=0.15, right=0.62, top=0.88, bottom=0.16)
         fig.savefig((NAME if overwrite else (NAME+'_half_A4.png')), dpi=200)
     elif res_format == ResFromat.A4_full:
         fig.set_size_inches(8,4)
